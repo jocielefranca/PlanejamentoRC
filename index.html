@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Programa Experiência que Conquista</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a4d3a 0%, #1a5f4a 100%);
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .slide {
+            min-height: 100vh;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            padding: 60px 20px;
+        }
+
+        .slide.active {
+            display: flex;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 20px;
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            text-transform: none;
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            margin: 30px 0 20px;
+            color: #fff;
+            text-transform: none;
+        }
+
+        h3 {
+            font-size: 1.4rem;
+            margin: 20px 0 15px;
+            color: #fff;
+            text-transform: none;
+        }
+
+        p, li {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+
+        ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        ul li:before {
+            content: "▸ ";
+            color: #fff;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .card {
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 20px 0;
+            border: 1px solid rgba(255,255,255,0.3);
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255,255,255,0.6);
+        }
+
+        .emoji {
+            font-size: 2rem;
+            margin-right: 10px;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .stat-box {
+            background: rgba(255,255,255,0.2);
+            padding: 25px;
+            border-radius: 10px;
+            text-align: center;
+            border: 2px solid rgba(255,255,255,0.4);
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #fff;
+            display: block;
+            margin: 10px 0;
+        }
+
+        .priority {
+            display: inline-block;
+            background: rgba(255,255,255,0.25);
+            padding: 8px 18px;
+            border-radius: 25px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            margin-left: 10px;
+            border: 2px solid;
+        }
+
+        .priority-high {
+            background: rgba(255,100,100,0.3);
+            border-color: rgba(255,100,100,0.6);
+            color: #ffcccc;
+        }
+
+        .priority-medium {
+            background: rgba(255,200,100,0.3);
+            border-color: rgba(255,200,100,0.6);
+            color: #ffe4b3;
+        }
+
+        .priority-low {
+            background: rgba(100,200,255,0.3);
+            border-color: rgba(100,200,255,0.6);
+            color: #cce7ff;
+        }
+
+        .badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.3);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
+        .opex {
+            background: rgba(255,200,100,0.4);
+            border: 1px solid rgba(255,200,100,0.6);
+        }
+
+        .capex {
+            background: rgba(100,150,255,0.4);
+            border: 1px solid rgba(100,150,255,0.6);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 30px 0;
+            background: rgba(255,255,255,0.15);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255,255,255,0.3);
+        }
+
+        th {
+            background: rgba(255,255,255,0.25);
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .navigation {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            gap: 15px;
+            z-index: 1000;
+        }
+
+        button {
+            background: #fff;
+            color: #0a4d3a;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        button:hover:not(:disabled) {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(255,255,255,0.5);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: rgba(255,255,255,0.2);
+            z-index: 1000;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: #fff;
+            transition: width 0.3s ease;
+        }
+
+        .highlight {
+            background: rgba(255,255,255,0.3);
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        blockquote {
+            border-left: 4px solid #fff;
+            padding-left: 20px;
+            margin: 30px 0;
+            font-style: italic;
+            font-size: 1.4rem;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 1.1rem;
+            color: rgba(255,255,255,0.9);
+        }
+
+        .slide-counter {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            background: rgba(255,255,255,0.2);
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <div class="progress">
+        <div class="progress-bar" id="progressBar"></div>
+    </div>
+
+    <div class="slide-counter">
+        <span id="currentSlideNum">1</span> / <span id="totalSlideNum">14</span>
+    </div>
+
+    <div class="container">
+        <!-- Slide 0: Capa -->
+        <div class="slide active">
+            <div class="logo">Grupo Diagonal | Diagonal | Diagonal Inc | Victa </div>
+            <h1 style="font-size: 4rem; text-align: center;">Planejamento da Área de Clientes</h1>
+            <p style="text-align: center; font-size: 1.5rem; margin-top: 30px;">Experiência que Conquista</p>
+        </div>
+
+        <!-- Slide 1: Contexto -->
+        <div class="slide">
+            <h1>Contexto & Desafio</h1>
+            
+            <div class="card">
+                <h3>Onde estamos hoje</h3>
+                <ul>
+                    <li>Portal e App do Cliente</li>
+                    <li>Monitoramento contínuo de NPS</li>
+                    <li>Pós-venda estruturado</li>
+                    <li>Eventos de visita e entrega</li>
+                    <li>Experiência de vistoria organizada</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <p><strong>Porém:</strong></p>
+                <ul>
+                    <li>Encantamento ainda é pouco tangível</li>
+                    <li>Ações são percebidas como isoladas</li>
+                    <li>O pior NPS acontece quando o cliente já está morando</li>
+                </ul>
+            </div>
+
+            <h2 style="margin-top: 40px;">O desafio estratégico</h2>
+            <p style="font-size: 1.5rem; text-align: center; margin-top: 20px;">
+                Sair do <span class="highlight">"atender muito bem"</span> → Evoluir para <span class="highlight">"encantar de forma consistente"</span>
+            </p>
+        </div>
+
+        <!-- Slide 2: Princípios -->
+        <div class="slide">
+            <h1>Princípios da Estratégia de CX</h1>
+            
+            <p style="font-size: 1.4rem; margin-bottom: 40px;">Não vamos criar mais processos. Vamos criar <span class="highlight">momentos memoráveis</span></p>
+
+            <div class="stats">
+                <div class="card">
+                    <h3><span class="emoji">1️⃣</span> Personalização real</h3>
+                    <ul>
+                        <li>Baseada na vida do cliente</li>
+                        <li>Uso de dados e consentimento</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h3><span class="emoji">2️⃣</span> Valor prático</h3>
+                    <ul>
+                        <li>Economia financeira</li>
+                        <li>Conveniência</li>
+                        <li>Redução de esforço</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h3><span class="emoji">3️⃣</span> Escala inteligente</h3>
+                    <ul>
+                        <li>IA humanizada</li>
+                        <li>Parcerias estratégicas</li>
+                        <li>Baixo custo incremental</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 3: Visão -->
+        <div class="slide">
+            <h1>Visão do Planejamento da Área</h1>
+            
+            <div class="card">
+                <h2><span class="emoji">🎯</span> Objetivo central</h2>
+                <p>Termos clientes, que:</p>
+                <ul>
+                    <li>Indicam espontaneamente</li>
+                    <li>Defendem a marca</li>
+                    <li>Compram novamente</li>
+                    <li>Permanecem conectados por anos</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h3><span class="emoji">📌</span> Especialmente relevante em:</h3>
+                <ul>
+                    <li>Obras longas (até 6 anos)</li>
+                    <li>Pós-entrega (fase mais crítica do NPS)</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 4: Estrutura -->
+        <div class="slide">
+            <h1>Estrutura do Programa</h1>
+            
+            <p style="font-size: 1.3rem; margin-bottom: 30px;">O Programa Experiência que Conquista se apoia em <span class="highlight">5 frentes claras</span>:</p>
+
+            <div class="stats">
+                <div class="stat-box">
+                    <span class="emoji">1️⃣</span>
+                    <p>Agentes Digitais<br>(IA Humanizada)</p>
+                </div>
+                <div class="stat-box">
+                    <span class="emoji">2️⃣</span>
+                    <p>Ações Emocionais<br>& Pontuais</p>
+                </div>
+                <div class="stat-box">
+                    <span class="emoji">3️⃣</span>
+                    <p>Encantamento na<br>Entrega & Pós-Chaves</p>
+                </div>
+                <div class="stat-box">
+                    <span class="emoji">4️⃣</span>
+                    <p>Plataformas Digitais<br>(Marketplace, Tour, Decoração)</p>
+                </div>
+                <div class="stat-box">
+                    <span class="emoji">5️⃣</span>
+                    <p>Comunidade &<br>Embaixadores</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: Agente Digital 360 -->
+        <div class="slide">
+            <h1><span class="emoji">1️⃣</span> Agentes Digitais</h1>
+            <h2>Agente Digital de Orientação 360° / Pós-Compra</h2>
+            
+            <div class="card">
+                <h3>Canais</h3>
+                <ul>
+                    <li>WhatsApp</li>
+                    <li>App do Cliente</li>
+                    <li>Portal do Cliente</li>
+                </ul>
+            </div>
+
+            <div class="stats">
+                <div class="card">
+                    <h3>O que faz</h3>
+                    <ul>
+                        <li>Respostas 24/7</li>
+                        <li>Manuais multimídia</li>
+                        <li>Orientação sobre uso</li>
+                        <li>Gestão de chamados</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h3>Metas & Métricas</h3>
+                    <ul>
+                        <li><span class="highlight">80%</span> autosserviço</li>
+                        <li>Tempo de resposta</li>
+                        <li>Redução de chamados</li>
+                        <li>NPS pós-atendimento</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="stat-box" style="margin-top: 20px;">
+                <span class="stat-value">R$ 150 mil</span>
+                <p>Investimento MVP <span class="badge capex">CAPEX</span></p>
+            </div>
+        </div>
+
+        <!-- Slide 6: Agente Cobrança -->
+        <div class="slide">
+            <h1>Agente de Negociação & Cobrança</h1>
+            
+            <div class="card">
+                <h3>O que é</h3>
+                <p>Agente de IA humanizado para relacionamento financeiro</p>
+            </div>
+
+            <div class="stats">
+                <div class="card">
+                    <h3>Funcionalidades</h3>
+                    <ul>
+                        <li>Alertas antes do vencimento</li>
+                        <li>Negociação amigável via WhatsApp</li>
+                        <li>Campanhas automáticas segmentadas</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h3>Métricas</h3>
+                    <ul>
+                        <li>Redução da inadimplência</li>
+                        <li>Taxa de acordos fechados</li>
+                        <li>Tempo de regularização</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="stat-box" style="margin-top: 20px;">
+                <span class="stat-value">R$ 120 mil</span>
+                <p>Investimento MVP <span class="badge opex">OPEX</span></p>
+            </div>
+        </div>
+
+        <!-- Slide 7: Ações Emocionais -->
+        <div class="slide">
+            <h1><span class="emoji">2️⃣</span> Ações Emocionais & Pontuais</h1>
+            <h2>Encantar nos momentos que importam</h2>
+            
+            <div class="stats">
+                <div class="stat-box">
+                    <span class="emoji">🎂</span>
+                    <p>Aniversário</p>
+                </div>
+                <div class="stat-box">
+                    <span class="emoji">💍</span>
+                    <p>Casamento</p>
+                </div>
+                <div class="stat-box">
+                    <span class="emoji">👶</span>
+                    <p>Nascimento</p>
+                </div>
+                <div class="stat-box">
+                    <span class="emoji">🏡</span>
+                    <p>Primeiro ano</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>Exemplos de ações</h3>
+                <ul>
+                    <li>Mimos personalizados</li>
+                    <li>Cartas simbólicas</li>
+                    <li>Benefícios no marketplace</li>
+                </ul>
+            </div>
+
+            <div class="stat-box" style="margin-top: 20px;">
+                <span class="stat-value">R$ 50 mil</span>
+                <p>Investimento anual <span class="badge opex">OPEX</span></p>
+            </div>
+        </div>
+
+        <!-- Slide 8: Encantamento Entrega -->
+        <div class="slide">
+            <h1><span class="emoji">3️⃣</span> Encantamento na Entrega</h1>
+            
+            <div class="stats">
+                <div class="card">
+                    <h3>Kit de Onboarding</h3>
+                    <ul>
+                        <li>Boas-vindas</li>
+                        <li>Guia prático do que vem pela frente, o que é ser cliente do Grupo Diagonal</li>
+                        <li>Itens simbólicos</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h3>Marco do Sonho</h3>
+                    <ul>
+                        <li>Certificado simbólico</li>
+                        <li>Entrega com as chaves</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h3>Jantar de Estreia</h3>
+                    <ul>
+                        <li>Voucher para a primeira noite</li>
+                        <li>Momento inesquecível</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="stat-box" style="margin-top: 20px;">
+                <span class="stat-value">R$ 145 mil</span>
+                <p>Investimento total <span class="badge opex">OPEX</span></p>
+            </div>
+        </div>
+
+        <!-- Slide 9: Plataformas Digitais -->
+        <div class="slide">
+            <h1><span class="emoji">4️⃣</span> Plataformas Digitais</h1>
+            <h2>Marketplace, Tour Virtual e Decoração</h2>
+            
+            <div class="stats">
+                <div class="card">
+                    <h3>Marketplace do Morador</h3>
+                    <ul>
+                        <li>Energia elétrica (descontos e migração)</li>
+                        <li>Móveis e eletrodomésticos</li>
+                        <li>Internet e serviços residenciais</li>
+                        <li>Economia no momento da mudança</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h3>Tour Virtual de Obra</h3>
+                    <ul>
+                        <li>Acompanhamento remoto 360°</li>
+                        <li>Visitas virtuais ao empreendimento</li>
+                        <li>Timeline de evolução da obra</li>
+                        <li>Transparência e conexão</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h3>Plataforma de Decoração</h3>
+                    <ul>
+                        <li>Inspirações personalizadas</li>
+                        <li>Simulações de ambientes</li>
+                        <li>Conexão com fornecedores</li>
+                        <li>Facilita o processo de decorar</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="stat-box" style="margin-top: 20px;">
+                <span class="stat-value">R$ 290 mil</span>
+                <p>Investimento <span class="badge capex">CAPEX</span></p>
+            </div>
+        </div>
+
+        <!-- Slide 10: Comunidade -->
+        <div class="slide">
+            <h1><span class="emoji">5️⃣</span> Comunidade & Embaixadores</h1>
+            
+            <div class="stats">
+                <div class="card">
+                    <h3>Clube Indica+</h3>
+                    <ul>
+                        <li>Programa gamificado</li>
+                        <li>Benefícios progressivos</li>
+                        <li>Recompensas exclusivas</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h3>Embaixadores Digitais</h3>
+                    <ul>
+                        <li>Clientes representantes</li>
+                        <li>Ampliação de alcance</li>
+                        <li>Autenticidade da marca</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>Métricas</h3>
+                <ul>
+                    <li>% vendas por indicação</li>
+                    <li>CAC por canal</li>
+                    <li>Alcance orgânico de marca</li>
+                </ul>
+            </div>
+
+            <div class="stat-box" style="margin-top: 20px;">
+                <span class="stat-value">R$ 100 mil</span>
+                <p>Investimento total <span class="badge opex">OPEX</span></p>
+            </div>
+        </div>
+
+        <!-- Slide 11: Investimentos -->
+        <div class="slide">
+            <h1>Investimentos por Frente</h1>
+            
+            <table>
+                <thead>
+                    <tr>
+                        <th>Frente do Programa</th>
+                        <th>Principais Iniciativas</th>
+                        <th>Investimento</th>
+                        <th>Tipo</th>
+                        <th>Prioridade</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1️⃣ Agentes Digitais (IA)</td>
+                        <td>Agente 360° + Negociação & Cobrança</td>
+                        <td><strong>R$ 270 mil</strong></td>
+                        <td><span class="badge capex">CAPEX</span></td>
+                        <td><span class="priority priority-high">P1 - Alta</span></td>
+                    </tr>
+                    <tr>
+                        <td>2️⃣ Ações Emocionais & Pontuais</td>
+                        <td>Aniversário, casamento, filhos</td>
+                        <td><strong>R$ 50 mil</strong></td>
+                        <td><span class="badge opex">OPEX</span></td>
+                        <td><span class="priority priority-low">P3 - Baixa</span></td>
+                    </tr>
+                    <tr>
+                        <td>3️⃣ Encantamento Entrega</td>
+                        <td>Kit onboarding, certificado, jantar</td>
+                        <td><strong>R$ 145 mil</strong></td>
+                        <td><span class="badge opex">OPEX</span></td>
+                        <td><span class="priority priority-low">P3 - Baixa</span></td>
+                    </tr>
+                    <tr>
+                        <td>4️⃣ Plataformas Digitais</td>
+                        <td>Marketplace, Tour Virtual, Decoração</td>
+                        <td><strong>R$ 290 mil</strong></td>
+                        <td><span class="badge capex">CAPEX</span></td>
+                        <td><span class="priority priority-low">P3 - Baixa</span></td>
+                    </tr>
+                    <tr>
+                        <td>5️⃣ Comunidade & Embaixadores</td>
+                        <td>Indicação, embaixadores</td>
+                        <td><strong>R$ 100 mil</strong></td>
+                        <td><span class="badge opex">OPEX</span></td>
+                        <td><span class="priority priority-low">P3 - Baixa</span></td>
+                    </tr>
+                    <tr style="background: rgba(255,255,255,0.25);">
+                        <td><strong>Base Digital (habilitadora)</strong></td>
+                        <td><strong>CRM + App + Portais</strong></td>
+                        <td><strong>R$ 380 mil</strong></td>
+                        <td><span class="badge capex">CAPEX</span></td>
+                        <td><span class="priority priority-high">P0 - Crítica</span></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="stat-box" style="margin-top: 30px;">
+                <span class="stat-value">R$ 1,235 milhão</span>
+                <p>Investimento Total Estimado</p>
+                <p style="margin-top: 15px; font-size: 0.9rem;">
+                    <span class="badge capex">CAPEX: R$ 940 mil</span>
+                    <span class="badge opex" style="margin-left: 10px;">OPEX: R$ 295 mil</span>
+                </p>
+                <p style="margin-top: 20px; font-size: 0.95rem; border-top: 1px solid rgba(255,255,255,0.3); padding-top: 20px;">
+                    <strong>Priorização de Implementação:</strong><br>
+                    <span class="priority priority-high" style="margin-top: 10px;">P0 - Crítica:</span> Base Digital (habilitadora)<br>
+                    <span class="priority priority-high" style="margin-top: 5px;">P1 - Alta:</span> Agentes Digitais (IA)<br>
+                    <span class="priority priority-low" style="margin-top: 5px;">P3 - Baixa:</span> Demais iniciativas voltadas para entrega
+                </p>
+            </div>
+        </div>
+
+        <!-- Slide 12: Resultados -->
+        <div class="slide">
+            <h1>Resultado Esperado para o Negócio</h1>
+            
+            <div class="stats">
+                <div class="stat-box">
+                    <span class="emoji">📈</span>
+                    <p>Aumento consistente de NPS no morar</p>
+                </div>
+                <div class="stat-box">
+                    <span class="emoji">💰</span>
+                    <p>Evitar aumento de custos no atendimento</p>
+                </div>
+                <div class="stat-box">
+                    <span class="emoji">🤝</span>
+                    <p>Aumento de vendas por indicação</p>
+                </div>
+                <div class="stat-box">
+                    <span class="emoji">⭐</span>
+                    <p>Fortalecimento da marca</p>
+                </div>
+                <div class="stat-box">
+                    <span class="emoji">🔗</span>
+                    <p>Clientes conectados por mais tempo</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 13: Mensagem Final -->
+        <div class="slide">
+                        
+            <blockquote>
+                Não estamos criando ações.<br><br>
+                Estamos criando <strong>um sistema de encantamento contínuo</strong>.<br><br>
+                Clientes bem atendidos ficam satisfeitos.<br>
+                <span style="font-size: 1.6rem;">Clientes encantados viram fãs.</span>
+            </blockquote>
+        </div>
+    </div>
+
+    <div class="navigation">
+        <button id="prevBtn">← Anterior</button>
+        <button id="nextBtn">Próximo →</button>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const progressBar = document.getElementById('progressBar');
+        const currentSlideNum = document.getElementById('currentSlideNum');
+        const totalSlideNum = document.getElementById('totalSlideNum');
+
+        totalSlideNum.textContent = totalSlides;
+
+        function updateSlide() {
+            slides.forEach((slide, index) => {
+                slide.classList.remove('active');
+                if (index === currentSlide) {
+                    slide.classList.add('active');
+                }
+            });
+
+            prevBtn.disabled = currentSlide === 0;
+            nextBtn.disabled = currentSlide === totalSlides - 1;
+
+            const progress = ((currentSlide + 1) / totalSlides) * 100;
+            progressBar.style.width = progress + '%';
+            currentSlideNum.textContent = currentSlide + 1;
+        }
+
+        function changeSlide(direction) {
+            currentSlide += direction;
+            if (currentSlide < 0) currentSlide = 0;
+            if (currentSlide >= totalSlides) currentSlide = totalSlides - 1;
+            updateSlide();
+        }
+
+        prevBtn.addEventListener('click', () => changeSlide(-1));
+        nextBtn.addEventListener('click', () => changeSlide(1));
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') changeSlide(-1);
+            if (e.key === 'ArrowRight') changeSlide(1);
+        });
+
+        updateSlide();
+    </script>
+</body>
+</html>
